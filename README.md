@@ -1,7 +1,7 @@
 
 # storeAPI  
 
-Standard e-commerce API create with Moleculer
+Standard e-commerce API create with Moleculer Framework
 https://moleculer.services/
 
 
