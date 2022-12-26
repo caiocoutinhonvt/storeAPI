@@ -1,6 +1,8 @@
 import type { Context, ServiceSchema } from "moleculer";
 import type { ApiSettingsSchema, GatewayResponse, IncomingRequest, Route } from "moleculer-web";
 import ApiGateway from "moleculer-web";
+import { AppDataSource } from '/home/pc/Desktop/node-estudo/StoreAPI/myapp/src/data-source'
+import "reflect-metadata"
 
 interface Meta {
 	userAgent?: string | null | undefined;
@@ -14,7 +16,7 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 	// More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html
 	settings: {
 		// Exposed port
-		port: process.env.PORT != null ? Number(process.env.PORT) : 3000,
+		port: process.env.PORT != null ? Number(process.env.PORT) : 3500,
 
 		// Exposed IP
 		ip: "0.0.0.0",
@@ -26,7 +28,12 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 			{
 				path: "/api",
 
-				whitelist: ["**"],
+				aliases:{
+					"POST /store/new": "StoreService.newStore",
+					"GET /store/": "StoreService.listStore",
+					"PUT /store/:id": "StoreService.updateStore",
+					"DELETE /store/:id": "StoreService.delStore",
+				},
 
 				// Route-level Express middlewares. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Middlewares
 				use: [],
@@ -43,8 +50,6 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 				// The auto-alias feature allows you to declare your route alias directly in your services.
 				// The gateway will dynamically build the full routes from service schema.
 				autoAliases: true,
-
-				aliases: {},
 
 				/**
 				 * Before call hook. You can check the request.
