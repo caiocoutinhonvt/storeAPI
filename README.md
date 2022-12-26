@@ -7,7 +7,7 @@ https://moleculer.services/
 
 This API contains: 
 
-- CRUD of Store, Itens. 
+- CRUD of Store, Product. 
 - Webscrapping Nike site for collecting shoes. 
 - Consuming others API: https://www.npmjs.com/package/sneaks-api
 - User register and authentication
