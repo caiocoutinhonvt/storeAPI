@@ -33,6 +33,16 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 					"GET /store/": "StoreService.listStore",
 					"PUT /store/:id": "StoreService.updateStore",
 					"DELETE /store/:id": "StoreService.delStore",
+
+					"POST /products/new": "ProductService.newProduct",
+					"GET /products/": "ProductService.listProduct",
+					"PUT /products/:id": "ProductService.updateProduct",
+					"DELETE /products/:id": "ProductService.delProduct",
+
+					"POST /user/new": "UserService.newUser",
+					"GET /user/": "UserService.listUser",
+					"PUT /user/:id": "UserService.updateUser",
+					"DELETE /user/:id": "UserService.delUser"
 				},
 
 				// Route-level Express middlewares. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Middlewares

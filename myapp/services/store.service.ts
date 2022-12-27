@@ -12,55 +12,78 @@ const StoreService = {
     actions: {
         newStore:{
             params:{
-                name: "string"
+                name: "string",
+                email: {type: "email"},
             },
 
             async handler(ctx:any): Promise<any>{
                 const repository = AppDataSource.getRepository(Store)
-                const newStore = repository.create({'name': ctx.params.name})
-                await repository.save(newStore)
-                return newStore
-            },
+
+                try {
+                    const newStore = repository.create({'name': ctx.params.name, 'email':ctx.params.email})
+                    await repository.save(newStore)
+                    return newStore
+                } catch {
+                    ctx.params.$statusCode = 404
+                }
+            }
         },
 
         listStore:{
-            handler(ctx:any): any{
-                 const repository = AppDataSource.getRepository(Store) 
-                 const listStore = repository.find({})
-                 return listStore
+            async handler(ctx:any): Promise<any>{
+                const repository = AppDataSource.getRepository(Store) 
+
+                try{
+                    const listStore = repository.find({ 
+                        relations: {
+                            products: true,
+                    }
+                })
+                    ctx.params.$statusCode = 200
+                    return listStore
+
+                } catch {
+                    ctx.params.$statusCode = 404
+                }
             },
         },
 
         delStore:{
-            params:{
-                id: "string"
-            },
-
-            async handler(ctx:any): Promise<any>{
+            async handler(ctx:any, id:number): Promise<any>{
                 const repository = AppDataSource.getRepository(Store) 
 
-                await repository.delete({'id': ctx.params.id})
-                
-                return `A loja com id ${ctx.params.id} foi deletada` 
+                try{
+                    await repository.delete({'id': id})
+                    ctx.params.$statusCode = 200
+                    return `Store successfully deleted`  
+                } catch {
+                    ctx.params.$statusCode = 204
+                }             
             }
         },
 
         updateStore:{
             params:{
-                name: "string"
+                name: "string",
+                email: {type: "email"},
             },
 
-            async handler(this, ctx:any, id:number): Promise<any>{
+            async handler(ctx:any, id:number): Promise<any>{
                 const repository = AppDataSource.getRepository(Store) 
-                
-                const store = await repository
-                                .createQueryBuilder()
-                                .update(Store)
-                                .set({ name: ctx.params.name})
-                                .where({id: id})
-                                .execute()
-                
-                return `A loja com id ${ctx.params.id} foi atualizada`
+
+                try{
+                    const store = await repository
+                    .createQueryBuilder()
+                    .update(Store)
+                    .set({ name: ctx.params.name})
+                    .where({id: id})
+                    .execute()
+
+                    ctx.params.$statusCode = 200
+                    return `Store successfully updated`
+                } catch {
+                    ctx.params.$statusCode = 204
+                }
                 }
             },
         },
