@@ -17,7 +17,7 @@ const StoreService = {
                 email: {type: "email"},
             },
 
-            async handler(ctx:any): Promise<any>{
+            async handler(ctx:any): Promise<Store | undefined>{
                 const repository = AppDataSource.getRepository(Store)
 
                 try {
@@ -33,7 +33,7 @@ const StoreService = {
 
         listStore:{
             rest:"GET /store/",
-            async handler(ctx:any): Promise<any>{
+            async handler(ctx:any): Promise<Store[] | undefined>{
                 const repository = AppDataSource.getRepository(Store) 
 
                 try{
@@ -53,7 +53,7 @@ const StoreService = {
 
         getStore:{
             rest:"GET /store/:id",
-            async handler(ctx:any): Promise<any>{
+            async handler(ctx:any): Promise<Promise<Store[] | undefined>>{
                 const { id } = ctx.params
                 const repository = AppDataSource.getRepository(Store) 
 
@@ -83,7 +83,8 @@ const StoreService = {
                 email: {type: "email"},
             },
 
-            async handler(ctx:any, id:number): Promise<any>{
+            async handler(ctx:any): Promise<void>{
+                const { id } = ctx.params
                 const repository = AppDataSource.getRepository(Store) 
 
                 try{
@@ -95,7 +96,6 @@ const StoreService = {
                     .execute()
 
                     ctx.params.$statusCode = 204
-                    return `Store successfully updated`
                 } catch(err) {
                     console.log(err.message)
                 }
@@ -105,7 +105,7 @@ const StoreService = {
         delStore:{
             rest:"DELETE /store/:id",
             auth: "required",
-                async handler(ctx:any): Promise<any>{
+                async handler(ctx:any): Promise<void>{
                     const { id } = ctx.params
                     const repository = AppDataSource.getRepository(Store) 
     

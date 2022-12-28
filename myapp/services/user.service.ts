@@ -12,7 +12,7 @@ const UserService = {
                 password:'string|min:5'
             },
 
-            async handler(ctx:any): Promise<any>{
+            async handler(ctx:any): Promise<User | undefined>{
                 const repository = AppDataSource.getRepository(User)
 
                 try {
@@ -32,7 +32,7 @@ const UserService = {
 
         listUser:{
             rest:"GET /user/",
-            async handler(ctx:any): Promise<any>{
+            async handler(ctx:any): Promise<User[] | undefined>{
                 const repository = AppDataSource.getRepository(User) 
 
                 try{
@@ -47,7 +47,7 @@ const UserService = {
         
         getUser:{
             rest:"GET /user/:id",
-            async handler(ctx:any): Promise<any>{
+            async handler(ctx:any): Promise<User[] | undefined>{
                 const repository = AppDataSource.getRepository(User) 
                 const { id } = ctx.params
 
@@ -69,7 +69,7 @@ const UserService = {
             },
             rest:"PUT /user/:id",
 
-            async handler(ctx:any): Promise<any>{
+            async handler(ctx:any): Promise<void>{
                 const { id } = ctx.params
                 const repository = AppDataSource.getRepository(User) 
 
@@ -95,7 +95,7 @@ const UserService = {
         delUser:{
             auth: "required",
             rest:"DELETE /user/:id",
-            async handler(ctx:any): Promise<any>{
+            async handler(ctx:any): Promise<void>{
                 const { id } = ctx.params
                 const repository = AppDataSource.getRepository(User) 
                 
