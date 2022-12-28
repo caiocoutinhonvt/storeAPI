@@ -11,6 +11,7 @@ const StoreService = {
     name:'StoreService',
     actions: {
         newStore:{
+            rest:"POST /store/new",
             params:{
                 name: "string",
                 email: {type: "email"},
@@ -24,13 +25,14 @@ const StoreService = {
                     await repository.save(newStore)
                     ctx.params.$statusCode = 201
                     return newStore
-                } catch(error) {
-                    console.log(error)
+                } catch(err) {
+                    console.log(err.message)
                 }
             }
         },
 
         listStore:{
+            rest:"GET /store/",
             async handler(ctx:any): Promise<any>{
                 const repository = AppDataSource.getRepository(Store) 
 
@@ -43,14 +45,14 @@ const StoreService = {
                     ctx.params.$statusCode = 200
                     return listStore
 
-                } catch(error) {
-                    console.log(error)
-                    ctx.params.$statusCode = 500 
+                } catch(err) {
+                    console.log(err.message)
                 }
             },
         },
 
         getStore:{
+            rest:"GET /store/:id",
             async handler(ctx:any): Promise<any>{
                 const { id } = ctx.params
                 const repository = AppDataSource.getRepository(Store) 
@@ -67,13 +69,15 @@ const StoreService = {
                     ctx.params.$statusCode = 200
                     return store
 
-                } catch(error) {
-                    console.log(error)
+                } catch(err) {
+                    console.log(err.message)
                 }
             },
         },
 
         updateStore:{
+            rest:"PUT /store/:id",
+            auth: "required",
             params:{
                 name: "string",
                 email: {type: "email"},
@@ -92,13 +96,15 @@ const StoreService = {
 
                     ctx.params.$statusCode = 204
                     return `Store successfully updated`
-                } catch(error) {
-                    console.log(error)
+                } catch(err) {
+                    console.log(err.message)
                 }
                 }
             },
 
         delStore:{
+            rest:"DELETE /store/:id",
+            auth: "required",
                 async handler(ctx:any): Promise<any>{
                     const { id } = ctx.params
                     const repository = AppDataSource.getRepository(Store) 
@@ -106,9 +112,9 @@ const StoreService = {
                     try{
                         await repository.delete({'id': id})
                         ctx.params.$statusCode = 204
-                    } catch(error) {
-                        console.log(error)
-                    }        
+                    } catch(err) {
+                        console.log(err.message)
+                    }       
                 }
             },
         

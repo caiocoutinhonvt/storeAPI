@@ -5,6 +5,7 @@ const ProductService = {
     name: 'ProductService',
     actions: {
         newProduct:{
+            rest:"POST /products/new",
             params:{
                 name: "string",
                 category: "string",
@@ -25,13 +26,14 @@ const ProductService = {
                     await repository.save(newProduct)
                     ctx.params.$statusCode = 201
                     return newProduct
-                } catch (error) {
-                    console.log(error)
+                } catch(err) {
+                    console.log(err.message)
                 }
             }
         },
-        
+
         listProduct:{
+            rest:"GET /products/",
             async handler(ctx:any): Promise<any>{
                 const repository = AppDataSource.getRepository(Product) 
 
@@ -40,13 +42,14 @@ const ProductService = {
                     ctx.params.$statusCode = 200
                     return listProducts
 
-                } catch (error) {
-                    console.log(error)
+                } catch(err) {
+                    console.log(err.message)
                 }
             }
         },
 
         getProduct:{
+            rest:"GET /products/:id",
             async handler(ctx:any): Promise<any>{
                 const repository = AppDataSource.getRepository(Product) 
                 const { id } = ctx.params
@@ -55,13 +58,15 @@ const ProductService = {
                     const products = repository.find({where:{'id': id}})
                     ctx.params.$statusCode = 200
                     return products
-                } catch(error) {
-                    console.log(error)
+                } catch(err) {
+                    console.log(err.message)
                 }
             }
         },
 
         updateProduct:{
+            rest:"PUT /products/:id",
+            auth: "required",
             params:{
                 name: "string",
                 category: "string",
@@ -87,13 +92,15 @@ const ProductService = {
                     .execute()
 
                     ctx.params.$statusCode = 204
-                } catch(error) {
-                    console.log(error)
+                } catch(err) {
+                    console.log(err.message)
                 }
             }
         },
 
         delProduct:{
+            rest:"DELETE /products/:id",
+
             async handler(ctx:any): Promise<any>{
                 const { id } = ctx.params
                 const repository = AppDataSource.getRepository(Product) 
@@ -101,8 +108,8 @@ const ProductService = {
                 try{
                     await repository.delete({'id': id})
                     ctx.params.$statusCode = 204
-                } catch(error) {
-                    console.log(error)
+                } catch(err) {
+                    console.log(err.message)
                 }
             }
         },
