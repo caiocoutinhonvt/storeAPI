@@ -23,8 +23,8 @@ const UserService = {
                     await repository.save(newUser)
                     ctx.params.$statusCode = 200
                     return newUser
-                } catch {
-                    ctx.params.$statusCode = 404
+                } catch(error) {
+                    console.log(error)
                 }
             }
         },
@@ -34,12 +34,11 @@ const UserService = {
                 const repository = AppDataSource.getRepository(User) 
 
                 try{
-                    const listProducts = repository.find({})
+                    const listUsers = repository.find({})
                     ctx.params.$statusCode = 200
-                    return listProducts
-
-                } catch {
-                    ctx.params.$statusCode = 404
+                    return listUsers
+                } catch(error) {
+                    console.log(error)
                 }
             }
         },
@@ -50,21 +49,14 @@ const UserService = {
                 const { id } = ctx.params
 
                 try{
-                    const listProducts = repository.find({
-                        where:{
-                            'id': id
-                        }
-                    })
+                    const user = repository.find({where:{'id': id}})
                     ctx.params.$statusCode = 200
-                    return listProducts
-
-                } catch {
-                    ctx.params.$statusCode = 404
+                    return user
+                } catch(error) {
+                    console.log(error)
                 }
             }
         },
-
-        
 
         updateUser:{
             params:{
@@ -78,7 +70,7 @@ const UserService = {
                 const repository = AppDataSource.getRepository(User) 
 
                 try{
-                    const store = await repository
+                    const user = await repository
                     .createQueryBuilder()
                     .update(User)
                     .set({ 
@@ -89,13 +81,13 @@ const UserService = {
                     .where({id: id})
                     .execute()
 
-                    ctx.params.$statusCode = 200
-                    return `User successfully updated` 
-                } catch {
                     ctx.params.$statusCode = 204
+                } catch(error) {
+                    console.log(error)
                 }
-                }
+            }
         },
+
         delUser:{
             async handler(ctx:any): Promise<any>{
                 const { id } = ctx.params
@@ -103,15 +95,14 @@ const UserService = {
                 
                 try{
                     await repository.delete({'id': id})
-                    ctx.params.$statusCode = 200
-                    return `User successfully deleted` 
-                } catch {
-                    ctx.params.$statusCode = 204
-                }             
+                    ctx.params.$statusCode = 204 
+                } catch(error) {
+                    console.log(error)
+                }          
             }
-        }
-        }
+        },
     }
+}
 
 export default UserService;
 

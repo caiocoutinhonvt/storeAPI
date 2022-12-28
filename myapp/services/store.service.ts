@@ -22,9 +22,10 @@ const StoreService = {
                 try {
                     const newStore = repository.create({'name': ctx.params.name, 'email':ctx.params.email})
                     await repository.save(newStore)
+                    ctx.params.$statusCode = 201
                     return newStore
-                } catch {
-                    ctx.params.$statusCode = 404
+                } catch(error) {
+                    console.log(error)
                 }
             }
         },
@@ -42,8 +43,9 @@ const StoreService = {
                     ctx.params.$statusCode = 200
                     return listStore
 
-                } catch {
-                    ctx.params.$statusCode = 404
+                } catch(error) {
+                    console.log(error)
+                    ctx.params.$statusCode = 500 
                 }
             },
         },
@@ -54,7 +56,7 @@ const StoreService = {
                 const repository = AppDataSource.getRepository(Store) 
 
                 try{
-                    const listStore = repository.find({
+                    const store = repository.find({
                         where:{
                             id: id
                         },
@@ -63,10 +65,10 @@ const StoreService = {
                     }
                 })
                     ctx.params.$statusCode = 200
-                    return listStore
+                    return store
 
-                } catch {
-                    ctx.params.$statusCode = 404
+                } catch(error) {
+                    console.log(error)
                 }
             },
         },
@@ -88,14 +90,14 @@ const StoreService = {
                     .where({id: id})
                     .execute()
 
-                    ctx.params.$statusCode = 200
-                    return `Store successfully updated`
-                } catch {
                     ctx.params.$statusCode = 204
+                    return `Store successfully updated`
+                } catch(error) {
+                    console.log(error)
                 }
                 }
             },
-            
+
         delStore:{
                 async handler(ctx:any): Promise<any>{
                     const { id } = ctx.params
@@ -103,10 +105,10 @@ const StoreService = {
     
                     try{
                         await repository.delete({'id': id})
-                        ctx.params.$statusCode = 200 
-                    } catch {
                         ctx.params.$statusCode = 204
-                    }             
+                    } catch(error) {
+                        console.log(error)
+                    }        
                 }
             },
         

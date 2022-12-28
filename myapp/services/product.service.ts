@@ -25,11 +25,12 @@ const ProductService = {
                     await repository.save(newProduct)
                     ctx.params.$statusCode = 201
                     return newProduct
-                } catch {
-                    ctx.params.$statusCode = 500 // 5XX
+                } catch (error) {
+                    console.log(error)
                 }
             }
         },
+        
         listProduct:{
             async handler(ctx:any): Promise<any>{
                 const repository = AppDataSource.getRepository(Product) 
@@ -39,8 +40,8 @@ const ProductService = {
                     ctx.params.$statusCode = 200
                     return listProducts
 
-                } catch {
-                    ctx.params.$statusCode = 500 // 5XX
+                } catch (error) {
+                    console.log(error)
                 }
             }
         },
@@ -51,16 +52,11 @@ const ProductService = {
                 const { id } = ctx.params
 
                 try{
-                    const listProducts = repository.find({
-                        where:{
-                            'id': id
-                        }
-                    })
+                    const products = repository.find({where:{'id': id}})
                     ctx.params.$statusCode = 200
-                    return listProducts
-
-                } catch {
-                    ctx.params.$statusCode = 500 // 5XX
+                    return products
+                } catch(error) {
+                    console.log(error)
                 }
             }
         },
@@ -78,7 +74,7 @@ const ProductService = {
                 const repository = AppDataSource.getRepository(Product) 
 
                 try{
-                    const store = await repository
+                    const product = await repository
                     .createQueryBuilder()
                     .update(ProductService)
                     .set({ 
@@ -91,11 +87,11 @@ const ProductService = {
                     .execute()
 
                     ctx.params.$statusCode = 204
-                } catch {
-                    ctx.params.$statusCode = 500 // 5XX
+                } catch(error) {
+                    console.log(error)
                 }
-                }
-            },
+            }
+        },
 
         delProduct:{
             async handler(ctx:any): Promise<any>{
@@ -105,9 +101,9 @@ const ProductService = {
                 try{
                     await repository.delete({'id': id})
                     ctx.params.$statusCode = 204
-                } catch {
-                    ctx.params.$statusCode = 500 // 5XX
-                }             
+                } catch(error) {
+                    console.log(error)
+                }
             }
         },
     }
