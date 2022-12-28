@@ -43,6 +43,28 @@ const UserService = {
                 }
             }
         },
+        
+        getUser:{
+            async handler(ctx:any): Promise<any>{
+                const repository = AppDataSource.getRepository(User) 
+                const { id } = ctx.params
+
+                try{
+                    const listProducts = repository.find({
+                        where:{
+                            'id': id
+                        }
+                    })
+                    ctx.params.$statusCode = 200
+                    return listProducts
+
+                } catch {
+                    ctx.params.$statusCode = 404
+                }
+            }
+        },
+
+        
 
         updateUser:{
             params:{
@@ -51,7 +73,8 @@ const UserService = {
                 password:'string|min:5'
             },
 
-            async handler(ctx:any, id:number): Promise<any>{
+            async handler(ctx:any): Promise<any>{
+                const { id } = ctx.params
                 const repository = AppDataSource.getRepository(User) 
 
                 try{
@@ -74,8 +97,8 @@ const UserService = {
                 }
         },
         delUser:{
-
-            async handler(ctx:any, id:number): Promise<any>{
+            async handler(ctx:any): Promise<any>{
+                const { id } = ctx.params
                 const repository = AppDataSource.getRepository(User) 
                 
                 try{

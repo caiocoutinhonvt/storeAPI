@@ -45,6 +45,26 @@ const ProductService = {
             }
         },
 
+        getProduct:{
+            async handler(ctx:any): Promise<any>{
+                const repository = AppDataSource.getRepository(Product) 
+                const { id } = ctx.params
+
+                try{
+                    const listProducts = repository.find({
+                        where:{
+                            'id': id
+                        }
+                    })
+                    ctx.params.$statusCode = 200
+                    return listProducts
+
+                } catch {
+                    ctx.params.$statusCode = 500 // 5XX
+                }
+            }
+        },
+
         updateProduct:{
             params:{
                 name: "string",
@@ -53,7 +73,8 @@ const ProductService = {
                 store: "number"
             },
 
-            async handler(ctx:any, id:number): Promise<any>{
+            async handler(ctx:any): Promise<any>{
+                const { id } = ctx.params
                 const repository = AppDataSource.getRepository(Product) 
 
                 try{
@@ -77,7 +98,8 @@ const ProductService = {
             },
 
         delProduct:{
-            async handler(ctx:any, id:number): Promise<any>{
+            async handler(ctx:any): Promise<any>{
+                const { id } = ctx.params
                 const repository = AppDataSource.getRepository(Product) 
 
                 try{

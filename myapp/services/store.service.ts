@@ -48,18 +48,27 @@ const StoreService = {
             },
         },
 
-        delStore:{
-            async handler(ctx:any, id:number): Promise<any>{
+        getStore:{
+            async handler(ctx:any): Promise<any>{
+                const { id } = ctx.params
                 const repository = AppDataSource.getRepository(Store) 
 
                 try{
-                    await repository.delete({'id': id})
+                    const listStore = repository.find({
+                        where:{
+                            id: id
+                        },
+                        relations: {
+                            products: true,
+                    }
+                })
                     ctx.params.$statusCode = 200
-                    return `Store successfully deleted`  
+                    return listStore
+
                 } catch {
-                    ctx.params.$statusCode = 204
-                }             
-            }
+                    ctx.params.$statusCode = 404
+                }
+            },
         },
 
         updateStore:{
@@ -86,9 +95,24 @@ const StoreService = {
                 }
                 }
             },
-        },
+            
+        delStore:{
+                async handler(ctx:any): Promise<any>{
+                    const { id } = ctx.params
+                    const repository = AppDataSource.getRepository(Store) 
+    
+                    try{
+                        await repository.delete({'id': id})
+                        ctx.params.$statusCode = 200 
+                    } catch {
+                        ctx.params.$statusCode = 204
+                    }             
+                }
+            },
+        
        
     }
+}
 export default StoreService;
 
 

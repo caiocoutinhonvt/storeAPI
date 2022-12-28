@@ -31,16 +31,19 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 				aliases:{
 					"POST /store/new": "StoreService.newStore",
 					"GET /store/": "StoreService.listStore",
+					"GET /store/:id": "StoreService.getStore",
 					"PUT /store/:id": "StoreService.updateStore",
 					"DELETE /store/:id": "StoreService.delStore",
 
 					"POST /products/new": "ProductService.newProduct",
 					"GET /products/": "ProductService.listProduct",
+					"GET /products/:id": "ProductService.getProduct",
 					"PUT /products/:id": "ProductService.updateProduct",
 					"DELETE /products/:id": "ProductService.delProduct",
 
 					"POST /user/new": "UserService.newUser",
 					"GET /user/": "UserService.listUser",
+					"GET /user/:id": "UserService.getUser",
 					"PUT /user/:id": "UserService.updateUser",
 					"DELETE /user/:id": "UserService.delUser"
 				},
