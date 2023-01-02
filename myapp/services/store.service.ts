@@ -1,11 +1,13 @@
 "use strict"
 import { create } from "domain"
 import "reflect-metadata"
+import { Repository } from "typeorm"
 import { errorHandler } from "../moleculer.config"
 import { Store } from '../src/entity/Store'
 import { AppDataSource } from '/home/pc/Desktop/node-estudo/StoreAPI/myapp/src/data-source'
 
 
+const storeRepository:Repository<Store> = AppDataSource.getRepository(Store)
 
 const StoreService = {
     name:'StoreService',
@@ -17,48 +19,45 @@ const StoreService = {
                 email: {type: "email"},
             },
 
-            async handler(ctx:any): Promise<Store | undefined>{
-                const repository = AppDataSource.getRepository(Store)
-
+            async handler(ctx:any): Promise<Store|Error>{
                 try {
-                    const newStore = repository.create({'name': ctx.params.name, 'email':ctx.params.email})
-                    await repository.save(newStore)
-                    ctx.params.$statusCode = 201
+                    const newStore = storeRepository.create({'name': ctx.params.name, 'email':ctx.params.email})
+                    await storeRepository.save(newStore)
+                    ctx.meta.$statusCode = 201
                     return newStore
                 } catch(err) {
                     console.log(err.message)
+                    return new Error(err.message)
                 }
             }
         },
 
         listStore:{
             rest:"GET /store/",
-            async handler(ctx:any): Promise<Store[] | undefined>{
-                const repository = AppDataSource.getRepository(Store) 
-
+            async handler(ctx:any): Promise<Store[]|Error>{
                 try{
-                    const listStore = repository.find({ 
+                    const listStore = storeRepository.find({ 
                         relations: {
                             products: true,
                     }
                 })
-                    ctx.params.$statusCode = 200
+                    ctx.meta.$statusCode = 200
                     return listStore
 
                 } catch(err) {
                     console.log(err.message)
+                    return new Error(err.message)
                 }
             },
         },
 
         getStore:{
             rest:"GET /store/:id",
-            async handler(ctx:any): Promise<Promise<Store[] | undefined>>{
+            async handler(ctx:any): Promise<Promise<Store[]|Error>>{
                 const { id } = ctx.params
-                const repository = AppDataSource.getRepository(Store) 
 
                 try{
-                    const store = repository.find({
+                    const store = storeRepository.find({
                         where:{
                             id: id
                         },
@@ -66,11 +65,12 @@ const StoreService = {
                             products: true,
                     }
                 })
-                    ctx.params.$statusCode = 200
+                    ctx.meta.$statusCode = 200
                     return store
 
                 } catch(err) {
                     console.log(err.message)
+                    return new Error(err.message)
                 }
             },
         },
@@ -83,21 +83,21 @@ const StoreService = {
                 email: {type: "email"},
             },
 
-            async handler(ctx:any): Promise<void>{
+            async handler(ctx:any): Promise<void|Error>{
                 const { id } = ctx.params
-                const repository = AppDataSource.getRepository(Store) 
 
                 try{
-                    const store = await repository
+                    const store = await storeRepository
                     .createQueryBuilder()
                     .update(Store)
                     .set({ name: ctx.params.name})
                     .where({id: id})
                     .execute()
 
-                    ctx.params.$statusCode = 204
+                    ctx.meta.$statusCode = 204
                 } catch(err) {
                     console.log(err.message)
+                    return new Error(err.message)
                 }
                 }
             },
@@ -105,16 +105,16 @@ const StoreService = {
         delStore:{
             rest:"DELETE /store/:id",
             auth: "required",
-                async handler(ctx:any): Promise<void>{
+                async handler(ctx:any): Promise<void|Error>{
                     const { id } = ctx.params
-                    const repository = AppDataSource.getRepository(Store) 
-    
+
                     try{
-                        await repository.delete({'id': id})
+                        await storeRepository.delete({'id': id})
                         ctx.params.$statusCode = 204
                     } catch(err) {
                         console.log(err.message)
-                    }       
+                        return new Error(err.message)
+                    }     
                 }
             },
         

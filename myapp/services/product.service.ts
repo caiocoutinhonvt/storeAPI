@@ -1,6 +1,10 @@
 import { Repository } from "typeorm"
 import { AppDataSource } from "../src/data-source"
 import { Product } from "../src/entity/Product"
+import { Error } from "../src/error/Error"
+
+
+const productRepository:Repository<Product> = AppDataSource.getRepository(Product)
 
 const ProductService = {
     name: 'ProductService',
@@ -14,56 +18,58 @@ const ProductService = {
                 store: "number"
             },
 
-            async handler(ctx:any): Promise<Product | undefined>{ 
-                const repository = AppDataSource.getRepository(Product)
+            async handler(ctx:any): Promise<Product|Error>{ 
+                
 
                 try {
-                    const newProduct:Product = repository.create({
+                    const newProduct:Product = productRepository.create({
                         'name': ctx.params.name, 
                         'category':ctx.params.category, 
                         'price': ctx.params.price,
                         'store': ctx.params.store,
                     })
 
-                    await repository.save(newProduct)
+                    await productRepository.save(newProduct)
 
-                    ctx.params.$statusCode = 201
+                    ctx.meta.$statusCode = 201
 
                     return newProduct
                 } catch(err) {
                     console.log(err.message)
+                    return new Error(err.message)
                 }
             }
         },
 
         listProduct:{
             rest:"GET /products/",
-            async handler(ctx:any): Promise<Product[] | undefined>{
-                const repository = AppDataSource.getRepository(Product) 
+            async handler(ctx:any): Promise<Product[]|Error>{
+
 
                 try{
-                    const listProducts = repository.find({})
-                    ctx.params.$statusCode = 200
+                    const listProducts = productRepository.find({})
+                    ctx.meta.$statusCode = 200
                     return listProducts
 
                 } catch(err) {
                     console.log(err.message)
+                    return new Error(err.message)
                 }
             }
         },
 
         getProduct:{
             rest:"GET /products/:id",
-            async handler(ctx:any): Promise<Product[] | undefined>{
-                const repository = AppDataSource.getRepository(Product) 
+            async handler(ctx:any): Promise<Product[]|Error>{
                 const { id } = ctx.params
 
                 try{
-                    const products = repository.find({where:{'id': id}})
-                    ctx.params.$statusCode = 200
+                    const products = productRepository.find({where:{'id': id}})
+                    ctx.meta.$statusCode = 200
                     return products
                 } catch(err) {
                     console.log(err.message)
+                    return new Error(err.message)
                 }
             }
         },
@@ -77,12 +83,11 @@ const ProductService = {
                 store: "number"
             },
 
-            async handler(ctx:any): Promise<void>{
+            async handler(ctx:any): Promise<void|Error>{
                 const { id } = ctx.params
-                const repository = AppDataSource.getRepository(Product) 
 
                 try{
-                    const product = await repository
+                    const product = await productRepository
                     .createQueryBuilder()
                     .update(ProductService)
                     .set({ 
@@ -94,9 +99,10 @@ const ProductService = {
                     .where({id: id})
                     .execute()
 
-                    ctx.params.$statusCode = 204
+                    ctx.meta.$statusCode = 204
                 } catch(err) {
                     console.log(err.message)
+                    return new Error(err.message)
                 }
             }
         },
@@ -104,15 +110,15 @@ const ProductService = {
         delProduct:{
             rest:"DELETE /products/:id",
 
-            async handler(ctx:any): Promise<void>{
+            async handler(ctx:any): Promise<void|Error>{
                 const { id } = ctx.params
-                const repository = AppDataSource.getRepository(Product) 
 
                 try{
-                    await repository.delete({'id': id})
-                    ctx.params.$statusCode = 204
+                    await productRepository.delete({'id': id})
+                    ctx.meta.$statusCode = 204
                 } catch(err) {
                     console.log(err.message)
+                    return new Error(err.message)
                 }
             }
         },

@@ -1,5 +1,9 @@
+import { Repository } from "typeorm"
 import { AppDataSource } from "../src/data-source"
 import { User } from "../src/entity/User"
+
+
+const userRepository:Repository<User> = AppDataSource.getRepository(User)
 
 const UserService = {
     name: 'UserService',
@@ -12,51 +16,51 @@ const UserService = {
                 password:'string|min:5'
             },
 
-            async handler(ctx:any): Promise<User | undefined>{
-                const repository = AppDataSource.getRepository(User)
+            async handler(ctx:any): Promise<User|Error>{
+                
 
                 try {
-                    const newUser = repository.create({ 
+                    const newUser = userRepository.create({ 
                         'name': ctx.params.name, 
                         'email':ctx.params.email, 
                         'password': ctx.params.password
                     })
-                    await repository.save(newUser)
-                    ctx.params.$statusCode = 200
+                    await userRepository.save(newUser)
+                    ctx.meta.$statusCode = 200
                     return newUser
                 } catch(err) {
                     console.log(err.message)
+                    return new Error(err.message)
                 }
             }
         },
 
         listUser:{
             rest:"GET /user/",
-            async handler(ctx:any): Promise<User[] | undefined>{
-                const repository = AppDataSource.getRepository(User) 
-
+            async handler(ctx:any): Promise<User[]|Error>{
                 try{
-                    const listUsers = repository.find({})
-                    ctx.params.$statusCode = 200
+                    const listUsers = userRepository.find({})
+                    ctx.meta.$statusCode = 200
                     return listUsers
                 } catch(err) {
                     console.log(err.message)
+                    return new Error(err.message)
                 }
             }
         },
         
         getUser:{
             rest:"GET /user/:id",
-            async handler(ctx:any): Promise<User[] | undefined>{
-                const repository = AppDataSource.getRepository(User) 
+            async handler(ctx:any): Promise<User[]|Error>{
                 const { id } = ctx.params
 
                 try{
-                    const user = repository.find({where:{'id': id}})
-                    ctx.params.$statusCode = 200
+                    const user = userRepository.find({where:{'id': id}})
+                    ctx.meta.$statusCode = 200
                     return user
                 } catch(err) {
                     console.log(err.message)
+                    return new Error(err.message)
                 }
             }
         },
@@ -69,12 +73,11 @@ const UserService = {
             },
             rest:"PUT /user/:id",
 
-            async handler(ctx:any): Promise<void>{
+            async handler(ctx:any): Promise<void|Error>{
                 const { id } = ctx.params
-                const repository = AppDataSource.getRepository(User) 
 
                 try{
-                    const user = await repository
+                    const user = await userRepository
                     .createQueryBuilder()
                     .update(User)
                     .set({ 
@@ -85,9 +88,10 @@ const UserService = {
                     .where({id: id})
                     .execute()
 
-                    ctx.params.$statusCode = 204
+                    ctx.meta.$statusCode = 204
                 } catch(err) {
                     console.log(err.message)
+                    return new Error(err.message)
                 }
             }
         },
@@ -95,16 +99,16 @@ const UserService = {
         delUser:{
             auth: "required",
             rest:"DELETE /user/:id",
-            async handler(ctx:any): Promise<void>{
+            async handler(ctx:any): Promise<void|Error>{
                 const { id } = ctx.params
-                const repository = AppDataSource.getRepository(User) 
                 
                 try{
-                    await repository.delete({'id': id})
-                    ctx.params.$statusCode = 204 
+                    await userRepository.delete({'id': id})
+                    ctx.meta.$statusCode = 204 
                 } catch(err) {
                     console.log(err.message)
-                }        
+                    return new Error(err.message)
+                }      
             }
         },
     }

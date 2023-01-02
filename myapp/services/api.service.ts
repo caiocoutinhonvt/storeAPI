@@ -45,7 +45,9 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 					"GET /user/": "UserService.listUser",
 					"GET /user/:id": "UserService.getUser",
 					"PUT /user/:id": "UserService.updateUser",
-					"DELETE /user/:id": "UserService.delUser"
+					"DELETE /user/:id": "UserService.delUser",
+
+					"POST /cart/new": "CartService.newCart" 
 				},
 
 				whitelist: [
