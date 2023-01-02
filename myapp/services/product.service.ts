@@ -19,8 +19,6 @@ const ProductService = {
             },
 
             async handler(ctx:any): Promise<Product|Error>{ 
-                
-
                 try {
                     const newProduct:Product = productRepository.create({
                         'name': ctx.params.name, 
@@ -32,7 +30,6 @@ const ProductService = {
                     await productRepository.save(newProduct)
 
                     ctx.meta.$statusCode = 201
-
                     return newProduct
                 } catch(err) {
                     console.log(err.message)

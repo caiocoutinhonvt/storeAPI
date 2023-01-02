@@ -8,8 +8,7 @@ import { User } from "../src/entity/User"
 
 
 const cartRepository = AppDataSource.getRepository(Cart)
-const userRepository = AppDataSource.getRepository(User)
-const productRepository = AppDataSource.getRepository(Product)
+
 
 
 
@@ -58,6 +57,24 @@ const CartService = {
             }
 
 
+        },
+        delCart: {
+            async handler(ctx:any): Promise<any>{ 
+                const { user } = ctx.params
+                const { product } = ctx.params
+                try{
+                    await cartRepository.delete({
+                    'user': user,
+                    'product': product 
+                    }
+                )
+                    return 'Deletado com sucesso'
+                    ctx.meta.$statusCode = 204
+                } catch(err) {
+                    console.log(err.message)
+                    return new Error(err.message)
+                }
+            }
         }
     }
 }
