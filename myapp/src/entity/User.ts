@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, BeforeInsert, BeforeUpdate } from "typeorm"
 import { Cart } from "./Cart"
+import bcrypt from 'bcryptjs'
 
 @Entity('users')
 export class User{
@@ -9,7 +10,7 @@ export class User{
     @Column({type: 'text'})
     name: string
 
-    @Column({type: 'text'})
+    @Column({type: 'text', unique: true})
     email: string
     
     @Column({type: 'text'})
@@ -17,6 +18,14 @@ export class User{
 
     @OneToMany(() => Cart, (cart) => cart.user)
     carts: Cart[]
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    hashPassword(){
+        console.log(this.password)
+        this.password = bcrypt.hashSync(this.password, 8)
+        
+    }
 
 
     constructor(i:number, n:string, e:string, p:string, carts:Cart[]){

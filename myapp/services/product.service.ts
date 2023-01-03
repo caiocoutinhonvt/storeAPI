@@ -42,7 +42,6 @@ const ProductService = {
             rest:"GET /products/",
             async handler(ctx:any): Promise<Product[]|Error>{
 
-
                 try{
                     const listProducts = productRepository.find({})
                     ctx.meta.$statusCode = 200
@@ -84,19 +83,17 @@ const ProductService = {
                 const { id } = ctx.params
 
                 try{
-                    const product = await productRepository
-                    .createQueryBuilder()
-                    .update(ProductService)
-                    .set({ 
-                        'name': ctx.params.name, 
-                        'category':ctx.params.category, 
-                        'price': ctx.params.price,
-                        'store': ctx.params.store,
-                    })
-                    .where({id: id})
-                    .execute()
+                    const product = await productRepository.findOneBy({id: id})
 
-                    ctx.meta.$statusCode = 204
+                    if (product != null){
+                        product.name = ctx.params.name
+                        product.category = ctx.params.category
+                        product.price = ctx.params.price
+                        product.store = ctx.params.store
+
+                        await productRepository.save(product)
+                        ctx.meta.$statusCode = 204
+                    }
                 } catch(err) {
                     console.log(err.message)
                     return new Error(err.message)

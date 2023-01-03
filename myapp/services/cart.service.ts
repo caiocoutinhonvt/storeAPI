@@ -17,17 +17,13 @@ const CartService = {
     actions:{
         newCart: {
             params:{
-                user:'number',
                 product:'number'
             },
 
             async handler(ctx:any): Promise<any>{ 
                 try {
-                    // const user = userRepository.findBy({ id: ctx.params.user}) 
-                    // const product = productRepository.findBy({ id: ctx.params.product}) 
-
                     const newCart = cartRepository.create({
-                        'user': ctx.params.user,
+                        'user': ctx.meta.user.id,
                         'product': ctx.params.product
                     })
 
@@ -36,7 +32,7 @@ const CartService = {
                     const cart = cartRepository.find({
                         where:{
                             user: {
-                                id: ctx.params.user
+                                id: ctx.meta.user.id
                             },
                             product: {
                                 id: ctx.params.product
@@ -48,8 +44,8 @@ const CartService = {
                         },
                     })
 
+                    ctx.meta.$statusCode = 201
                     return cart
-
                 } catch(err) {
                     console.log(err.message)
                     return new Error(err.message)
@@ -58,18 +54,45 @@ const CartService = {
 
 
         },
+
+        UserCart: {
+            async handler(ctx:any): Promise<any>{ 
+                try {
+
+                    const findCart = await cartRepository.find({
+                        where:{
+                            user: ctx.meta.user.id
+                        },
+                        relations:{
+                            product: true
+                        }
+                    })
+
+                    ctx.meta.$statusCode = 200
+                    return findCart
+                } catch(err) {
+                    console.log(err.message)
+                    return new Error(err.message)
+                }
+            }
+        },
+        
         delCart: {
             async handler(ctx:any): Promise<any>{ 
                 const { user } = ctx.params
                 const { product } = ctx.params
+                
                 try{
-                    await cartRepository.delete({
-                    'user': user,
-                    'product': product 
+                    const cart = await cartRepository.delete({
+                        'user': user,
+                        'product': product 
                     }
                 )
-                    return 'Deletado com sucesso'
-                    ctx.meta.$statusCode = 204
+                    if (cart == null){
+                        ctx.meta.$statusCode = 401
+                    } else {
+                        ctx.meta.$statusCode = 204
+                    }
                 } catch(err) {
                     console.log(err.message)
                     return new Error(err.message)

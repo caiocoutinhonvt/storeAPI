@@ -87,14 +87,15 @@ const StoreService = {
                 const { id } = ctx.params
 
                 try{
-                    const store = await storeRepository
-                    .createQueryBuilder()
-                    .update(Store)
-                    .set({ name: ctx.params.name})
-                    .where({id: id})
-                    .execute()
+                    const store = await storeRepository.findOneBy({id: id})
 
-                    ctx.meta.$statusCode = 204
+                    if (store != null){
+                        store.name = ctx.params.name
+                        store.email = ctx.params.email
+
+                        await storeRepository.save(store)
+                        ctx.meta.$statusCode = 204
+                    }
                 } catch(err) {
                     console.log(err.message)
                     return new Error(err.message)

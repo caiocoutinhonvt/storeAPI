@@ -3,6 +3,7 @@ import type { ApiSettingsSchema, GatewayResponse, IncomingRequest, Route } from 
 import ApiGateway from "moleculer-web";
 import { AppDataSource } from '/home/pc/Desktop/node-estudo/StoreAPI/myapp/src/data-source'
 import "reflect-metadata"
+import jwt from 'jsonwebtoken'
 
 interface Meta {
 	userAgent?: string | null | undefined;
@@ -26,6 +27,28 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 
 		routes: [
 			{
+				path: "/",
+				aliases:{
+					"POST login": "UserService.loginUser",
+				},
+
+				whitelist: [
+					// Access any actions in 'articles' service
+					"**"
+				],
+
+				mergeParams: true,
+
+
+				// Enable authentication. Implement the logic into `authenticate` method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Authentication
+				authentication: false,
+
+				// Enable authorization. Implement the logic into `authorize` method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Authorization
+				authorization: false,
+				autoAliases: true,
+			},
+
+			{
 				path: "/api",
 
 				aliases:{
@@ -48,6 +71,7 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 					"DELETE /user/:id": "UserService.delUser",
 
 					"POST /cart/new": "CartService.newCart",
+					"GET /usercart": "CartService.UserCart",
 					"DELETE /cart/:user/:product": "CartService.delCart"
 				},
 
@@ -150,28 +174,37 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 			ctx: Context,
 			route: Route,
 			req: IncomingRequest,
-		): Record<string, unknown> | null {
+		){
 			// Read the token from header
 			const auth = req.headers.authorization;
 
-			if (auth && auth.startsWith("Bearer")) {
-				const token = auth.slice(7);
+			if (!auth){
+				throw new ApiGateway.Errors.UnAuthorizedError(
+						ApiGateway.Errors.ERR_NO_TOKEN,
+						null,
+					);
+			}		
 
-				// Check the token. Tip: call a service which verify the token. E.g. `accounts.resolveToken`
-				if (token === "123456") {
-					// Returns the resolved user. It will be set to the `ctx.meta.user`
-					return { id: 1, name: "John Doe" };
+			const token = auth.replace('Bearer', '').trim()
+
+			try {
+				var decoded_user = jwt.verify(token, 'secret');
+				if (decoded_user){
+					return decoded_user
 				}
+			} catch(err) {
 				// Invalid token
 				throw new ApiGateway.Errors.UnAuthorizedError(
 					ApiGateway.Errors.ERR_INVALID_TOKEN,
 					null,
 				);
-			} else {
-				// No token. Throw an error or do nothing if anonymous access is allowed.
-				// throw new E.UnAuthorizedError(E.ERR_NO_TOKEN);
-				return null;
 			}
+
+			throw new ApiGateway.Errors.UnAuthorizedError(
+				ApiGateway.Errors.ERR_NO_TOKEN,
+				null,
+			);
+
 		},
 
 		/**
