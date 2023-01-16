@@ -16,6 +16,20 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 
 	// More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html
 	settings: {
+		cors: {
+            // Configures the Access-Control-Allow-Origin CORS header.
+            origin: "*",
+            // Configures the Access-Control-Allow-Methods CORS header. 
+            methods: ["GET", "OPTIONS", "POST", "PUT", "DELETE"],
+            // Configures the Access-Control-Allow-Headers CORS header.
+            allowedHeaders: ['*'],
+            // Configures the Access-Control-Expose-Headers CORS header.
+            exposedHeaders: [],
+            // Configures the Access-Control-Allow-Credentials CORS header.
+            credentials: false,
+            // Configures the Access-Control-Max-Age CORS header.
+            maxAge: 3600
+        },
 		// Exposed port
 		port: process.env.PORT != null ? Number(process.env.PORT) : 3500,
 
@@ -31,6 +45,8 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 				aliases:{
 					"POST login": "UserService.loginUser",
 				},
+
+				
 
 				whitelist: [
 					// Access any actions in 'articles' service
@@ -87,10 +103,10 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 				mergeParams: true,
 
 				// Enable authentication. Implement the logic into `authenticate` method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Authentication
-				authentication: true,
+				authentication: false,
 
 				// Enable authorization. Implement the logic into `authorize` method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Authorization
-				authorization: true,
+				authorization: false,
 
 				// The auto-alias feature allows you to declare your route alias directly in your services.
 				// The gateway will dynamically build the full routes from service schema.
