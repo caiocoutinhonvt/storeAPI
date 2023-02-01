@@ -16,12 +16,12 @@ const StoreService = {
             rest:"POST /store/new",
             params:{
                 name: "string",
-                email: {type: "email"},
+                website: "string",
             },
 
             async handler(ctx:any): Promise<Store|Error>{
                 try {
-                    const newStore = storeRepository.create({'name': ctx.params.name, 'email':ctx.params.email})
+                    const newStore = storeRepository.create({'name': ctx.params.name, 'website':ctx.params.website})
                     await storeRepository.save(newStore)
                     ctx.meta.$statusCode = 201
                     return newStore
@@ -80,7 +80,7 @@ const StoreService = {
             auth: "required",
             params:{
                 name: "string",
-                email: {type: "email"},
+                website: "string",
             },
 
             async handler(ctx:any): Promise<void|Error>{
@@ -91,7 +91,7 @@ const StoreService = {
 
                     if (store != null){
                         store.name = ctx.params.name
-                        store.email = ctx.params.email
+                        store.website = ctx.params.website
 
                         await storeRepository.save(store)
                         ctx.meta.$statusCode = 204

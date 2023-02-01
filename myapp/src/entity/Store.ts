@@ -9,15 +9,15 @@ export class Store {
     @Column({type: 'text'})
     name: string
     @Column({type: 'text'})
-    email: string
+    website: string
 
     @OneToMany(() => Product, (product) => product.store)
     products: Product[]
 
-    constructor(i:number, n:string, e:string, p:Product[]){
+    constructor(i:number, n:string, w:string, p:Product[]){
         this.id = i
         this.name = n
-        this.email = e
+        this.website = w
         this.products = p
     }
 

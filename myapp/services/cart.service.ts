@@ -1,3 +1,4 @@
+import { totalmem } from "os"
 import { DEFAULT_ECDH_CURVE } from "tls"
 import { Repository } from "typeorm"
 import { AppDataSource } from "../src/data-source"

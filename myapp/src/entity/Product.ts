@@ -18,6 +18,8 @@ export class Product{
     @Column({type:'int'})
     price: number
 
+    @Column({type:'text'})
+    image: string
 
     @ManyToOne(() => Store, (store) => store.products)
     @JoinColumn({name:'store_id'})
@@ -32,6 +34,7 @@ export class Product{
         this.name = n,
         this.category = c
         this.price = p
+        this.image = img
         this.store = s
         this.carts = carts
     }

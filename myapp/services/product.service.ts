@@ -15,6 +15,7 @@ const ProductService = {
                 name: "string",
                 category: "string",
                 price: "number|positive:true",
+                image:"string",
                 store: "number"
             },
 
@@ -24,6 +25,7 @@ const ProductService = {
                         'name': ctx.params.name, 
                         'category':ctx.params.category, 
                         'price': ctx.params.price,
+                        'image': ctx.params.image,
                         'store': ctx.params.store,
                     })
 
@@ -76,6 +78,7 @@ const ProductService = {
                 name: "string",
                 category: "string",
                 price: "number|positive:true",
+                image:"string",
                 store: "number"
             },
 
@@ -89,6 +92,7 @@ const ProductService = {
                         product.name = ctx.params.name
                         product.category = ctx.params.category
                         product.price = ctx.params.price
+                        product.image = ctx.params.image
                         product.store = ctx.params.store
 
                         await productRepository.save(product)
