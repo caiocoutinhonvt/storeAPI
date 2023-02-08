@@ -48,15 +48,12 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 					"GET api/products/": "ProductService.listProduct",
 				},
 
-				
-
 				whitelist: [
 					// Access any actions in 'articles' service
 					"**"
 				],
 
 				mergeParams: true,
-
 
 				// Enable authentication. Implement the logic into `authenticate` method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Authentication
 				authentication: false,
@@ -81,8 +78,7 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 					"GET /products/:id": "ProductService.getProduct",
 					"PUT /products/:id": "ProductService.updateProduct",
 					"DELETE /products/:id": "ProductService.delProduct",
-
-					
+	
 					"GET /user/": "UserService.listUser",
 					"GET /user/:id": "UserService.getUser",
 					"PUT /user/:id": "UserService.updateUser",
@@ -90,7 +86,7 @@ const ApiService: ServiceSchema<ApiSettingsSchema> = {
 
 					"POST /cart/new": "CartService.newCart",
 					"GET /usercart": "CartService.UserCart",
-					"DELETE /cart/:user/:product": "CartService.delCart"
+					"DELETE /cart/:id": "CartService.delCart"
 				},
 
 				whitelist: [

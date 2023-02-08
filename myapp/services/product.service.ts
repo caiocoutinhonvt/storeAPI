@@ -62,9 +62,13 @@ const ProductService = {
                 const { id } = ctx.params
 
                 try{
-                    const products = productRepository.find({where:{'id': id}})
+                    const product = productRepository.find({
+                        where:{'id': id},
+                        relations: ['store']
+                    }
+                )
                     ctx.meta.$statusCode = 200
-                    return products
+                    return product
                 } catch(err) {
                     console.log(err.message)
                     return new Error(err.message)
@@ -102,7 +106,7 @@ const ProductService = {
                     console.log(err.message)
                     return new Error(err.message)
                 }
-            }
+            }  
         },
 
         delProduct:{

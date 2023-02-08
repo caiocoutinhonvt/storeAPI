@@ -80,13 +80,11 @@ const CartService = {
         
         delCart: {
             async handler(ctx:any): Promise<any>{ 
-                const { user } = ctx.params
-                const { product } = ctx.params
+                const { id } = ctx.params
                 
                 try{
                     const cart = await cartRepository.delete({
-                        'user': user,
-                        'product': product 
+                        'id': id
                     }
                 )
                     if (cart == null){
